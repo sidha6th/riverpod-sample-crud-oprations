@@ -43,6 +43,14 @@ class TextFormSWidget extends StatelessWidget {
                       }
                       return null;
                     },
+                    onChanged: (String? value) {
+                      bool isNewAttempt = value != null &&
+                          value.isEmpty &&
+                          isUpdate.value == true;
+                      if (isNewAttempt) {
+                        isUpdate.value = false;
+                      }
+                    },
                   ),
                 ),
               ),
@@ -52,23 +60,35 @@ class TextFormSWidget extends StatelessWidget {
             onPressed: () {
               formKey.currentState!.validate()
                   ? {
-                      ref.read(homeNotifier.notifier).addDataIntoDb(
-                            ListModel(
-                              email: email.text,
-                              phone: phone.text,
-                              key: DateTime.now()
-                                  .microsecondsSinceEpoch
-                                  .toString(),
-                            ),
-                          ),
+                      isUpdate.value
+                          ? ref.read(homeNotifier.notifier).editTheData(
+                              ListModel(
+                                email: email.text,
+                                phone: phone.text,
+                                key: selectedKey!,
+                              ),
+                              selectedIndex!)
+                          : ref.read(homeNotifier.notifier).addDataIntoDb(
+                                ListModel(
+                                  email: email.text,
+                                  phone: phone.text,
+                                  key: DateTime.now()
+                                      .microsecondsSinceEpoch
+                                      .toString(),
+                                ),
+                              ),
                       email.clear(),
                       phone.clear()
                     }
                   : '';
             },
-            child: const Text(
-              'SUBMIT',
-            ),
+            child: ValueListenableBuilder(
+                valueListenable: isUpdate,
+                builder: (_, bool value, __) {
+                  return Text(
+                    value ? 'UPDATE' : 'SUBMIT',
+                  );
+                }),
           ),
         ],
       ),

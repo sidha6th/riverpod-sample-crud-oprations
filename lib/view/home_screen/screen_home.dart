@@ -14,6 +14,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   ScrollController? _scrollController;
   ValueNotifier<double> heightNotifier = ValueNotifier(230);
+
   int? length;
   @override
   void initState() {
@@ -94,6 +95,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         icon: const Icon(
                           Icons.delete,
                           color: Colors.red,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          ref.read(homeNotifier.notifier).toggleToUpdate(
+                              index: index, data: listOfData[index]);
+                          _scrollController?.animateTo(0,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.bounceIn);
+                        },
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Colors.black,
                         ),
                       ),
                     ],
